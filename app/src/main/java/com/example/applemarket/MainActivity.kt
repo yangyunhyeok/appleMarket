@@ -1,17 +1,17 @@
 package com.example.applemarket
 
+import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -44,6 +44,23 @@ class MainActivity : AppCompatActivity() {
         val adapter = MyAdapter(dataList)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
+
+        adapter.itemClick = object : MyAdapter.ItemClick{
+            override fun onClick(view: View, position: Int) {
+                var a = 123
+                val intent = Intent(this@MainActivity,DetailActivity::class.java)
+                intent.putExtra("image",dataList[position].image)
+                intent.putExtra("user",dataList[position].user)
+                intent.putExtra("address",dataList[position].address)
+                intent.putExtra("title",dataList[position].title)
+                intent.putExtra("text",dataList[position].text)
+                intent.putExtra("price",dataList[position].price)
+                (this as Activity).overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_out_right)
+            }
+
+        }
+
+
 
         binding.titleBell.setOnClickListener {
             val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -96,7 +113,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onBackPressed() {
+    override fun onBackPressed() { // 뒤로가기 버튼시 종료 묻기
         val builder = AlertDialog.Builder(this)
         builder.setTitle("종료")
         builder.setMessage("정말 종료하시겠습니까?")

@@ -1,14 +1,25 @@
 package com.example.applemarket
 
+import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.DialogInterface
+import android.content.Intent
+import android.media.AudioAttributes
+import android.media.RingtoneManager
+import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.applemarket.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding:ActivityMainBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,9 +48,58 @@ class MainActivity : AppCompatActivity() {
 
 
 
+        binding.titleBell.setOnClickListener {
+            val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+            val builder: NotificationCompat.Builder
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                // 26 버전 이상
+                val channelId="one-channel"
+                val channelName="My Channel One"
+                val channel = NotificationChannel(
+                    channelId,
+                    channelName,
+                    NotificationManager.IMPORTANCE_DEFAULT
+                ).apply {
+                    // 채널에 다양한 정보 설정
+                    description = "My Channel One Description"
+                    setShowBadge(true)
+                    val uri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                    val audioAttributes = AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .build()
+                    setSound(uri, audioAttributes)
+                    enableVibration(true)
+                }
+                // 채널을 NotificationManager에 등록
+                manager.createNotificationChannel(channel)
+
+                // 채널을 이용하여 builder 생성
+                builder = NotificationCompat.Builder(this, channelId)
+
+            }else {
+                // 26 버전 이하
+                builder = NotificationCompat.Builder(this)
+            }
+
+
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            // 알림의 기본 정보
+            builder.run {
+                setSmallIcon(R.mipmap.ic_launcher)
+                setWhen(System.currentTimeMillis())
+                setContentTitle("키워드 알림")
+                setContentText("설정한 키워드에 대한 알림이 도착했습니다!!")
+            }
+            manager.notify(11, builder.build())
+        }
+
+
     }
 
-    override fun onBackPressed() {
+    override fun onBackPressed() { // 뒤로가기 버튼시 종료 묻기
         val builder = AlertDialog.Builder(this)
         builder.setTitle("종료")
         builder.setMessage("정말 종료하시겠습니까?")

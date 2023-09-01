@@ -2,9 +2,11 @@ package com.example.applemarket
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.applemarket.databinding.ItemRecyclerviewBinding
 import java.text.DecimalFormat
@@ -30,6 +32,7 @@ class MyAdapter(val dataList:MutableList<SalesItems>) :RecyclerView.Adapter<MyAd
         return Holder(binding)
     }
 
+
     override fun onBindViewHolder(holder:Holder, position: Int) {
 
         holder.itemView.setOnClickListener {
@@ -45,18 +48,20 @@ class MyAdapter(val dataList:MutableList<SalesItems>) :RecyclerView.Adapter<MyAd
         holder.comment.text = dataList[position].comment.toString()
         holder.like.text = dataList[position].like.toString()
 
+
         val detailMove = holder.binding.root
         detailMove.setOnClickListener {
             val intent = Intent(it.context,DetailActivity::class.java)
+
             intent.putExtra("image",dataList[position].image)
             intent.putExtra("user",dataList[position].user)
-            intent.putExtra("addrres",dataList[position].address)
+            intent.putExtra("address",dataList[position].address)
             intent.putExtra("title",dataList[position].title)
             intent.putExtra("text",dataList[position].text)
+            intent.putExtra("price",t_dec_up.format(dataList[position].price)+"원")
             it.context.startActivity(intent)
             (it.context as Activity).overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_out_right)
         }
-
     }
 
     override fun getItemCount(): Int {

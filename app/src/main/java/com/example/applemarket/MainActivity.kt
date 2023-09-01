@@ -20,6 +20,7 @@ import com.example.applemarket.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
     private lateinit var binding:ActivityMainBinding
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -44,21 +45,6 @@ class MainActivity : AppCompatActivity() {
         val adapter = MyAdapter(dataList)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
-
-        adapter.itemClick = object : MyAdapter.ItemClick{
-            override fun onClick(view: View, position: Int) {
-                var a = 123
-                val intent = Intent(this@MainActivity,DetailActivity::class.java)
-                intent.putExtra("image",dataList[position].image)
-                intent.putExtra("user",dataList[position].user)
-                intent.putExtra("address",dataList[position].address)
-                intent.putExtra("title",dataList[position].title)
-                intent.putExtra("text",dataList[position].text)
-                intent.putExtra("price",dataList[position].price)
-                (this as Activity).overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_out_right)
-            }
-
-        }
 
 
 
